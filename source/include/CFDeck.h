@@ -11,7 +11,7 @@ class CFDeck : public CFPile {
 
 public:
     CFDeck(glm::vec2 position)
-    : CFPile(position, glm::vec3(0.f, 0.f, 0.001f), glm::vec3(0.f, 0.f, 0.001f))
+    : CFPile(position, glm::vec3(0.f, 0.f, STACK_OFFSET), glm::vec3(0.f, 0.f, STACK_OFFSET))
     {}
 
     // Entity Interface
