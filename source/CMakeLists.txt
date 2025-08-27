@@ -3,7 +3,10 @@ set(SOURCES
 	CFCard.cpp
 	CFPile.cpp
 	CFPilable.cpp
-	CFDeck.cpp)
+	CFDeck.cpp
+    CFAction.cpp
+	CFGameMode.cpp
+	CFGameState.cpp)
 
 target_include_directories(CardFramework
                            PUBLIC
