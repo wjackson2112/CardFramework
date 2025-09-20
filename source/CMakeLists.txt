@@ -6,7 +6,8 @@ set(SOURCES
 	CFDeck.cpp
     CFAction.cpp
 	CFGameMode.cpp
-	CFGameState.cpp)
+	CFGameState.cpp
+	CFFlipAnimation.cpp)
 
 target_include_directories(CardFramework
                            PUBLIC

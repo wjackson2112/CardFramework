@@ -129,13 +129,13 @@ void CFPilable::lowerToBack()
     transform.setPosition(glm::vec3(origPosition.x, origPosition.y, STACK_OFFSET));
 }
 
-void CFPilable::addToPile(CFPilable *pilable, bool snap/*= false*/, IAnimationCompleteReceiver* completeReceiver/*= nullptr*/) //bool notify/*= true*/)
+void CFPilable::addToPile(CFPilable *pilable, bool snap/*= false*/, IAnimationCompleteReceiver* completeReceiver/*= nullptr*/, AnimCompleteFunction completeFunction/* = &IAnimationCompleteReceiver::animationCompleteWithId*/) //bool notify/*= true*/)
 {
     pilable->removeFromPile();
 
     if(this != getPileEnd())
     {
-        pileEnd->addToPile(pilable, snap, completeReceiver);
+        pileEnd->addToPile(pilable, snap, completeReceiver, completeFunction);
         return;
     }
 
@@ -156,8 +156,6 @@ void CFPilable::addToPile(CFPilable *pilable, bool snap/*= false*/, IAnimationCo
     glm::vec3 attachedWorldPosition = pilable->getWorldTransform().getPosition();
     glm::vec3 worldPositionDifference = attachedWorldPosition - currWorldPosition;
     pilable->getTransform()->translate(-worldPositionDifference);
-
-    AnimCompleteFunction complete = &IAnimationCompleteReceiver::animationCompleteWithId;
 
     // // Move the card to the target location
     // if(pilable->getPileParent() == pileRoot)
@@ -193,14 +191,14 @@ void CFPilable::addToPile(CFPilable *pilable, bool snap/*= false*/, IAnimationCo
         if(snap)
             pilable->snapTo(getRootOffset());
         else
-            pilable->moveTo(getRootOffset(), completeReceiver, "addToPile", complete);
+            pilable->moveTo(getRootOffset(), completeReceiver, "addToPile", completeFunction);
     }
     else
     {
         if(snap)
             pilable->snapTo(getPileOffset());
         else
-            pilable->moveTo(getPileOffset(), completeReceiver, "addToPile", complete);
+            pilable->moveTo(getPileOffset(), completeReceiver, "addToPile", completeFunction);
     }
 
     CFPilable* currPilable = pilable->getPileChild();
@@ -208,9 +206,9 @@ void CFPilable::addToPile(CFPilable *pilable, bool snap/*= false*/, IAnimationCo
     {
         // Move the card to the target location
         if(currPilable->getPileParent() == pileRoot)
-            currPilable->moveTo(getRootOffset(), completeReceiver, "addToPile", complete);
+            currPilable->moveTo(getRootOffset(), completeReceiver, "addToPile", completeFunction);
         else
-            currPilable->moveTo(getPileOffset(), completeReceiver, "addToPile", complete);
+            currPilable->moveTo(getPileOffset(), completeReceiver, "addToPile", completeFunction);
 
         currPilable = currPilable->getPileChild();
     }

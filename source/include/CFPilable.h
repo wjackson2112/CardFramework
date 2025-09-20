@@ -64,7 +64,7 @@ public:
 
     virtual void raiseToFront();
     virtual void lowerToBack();
-    virtual void addToPile(CFPilable *pilable, bool snap = false, IAnimationCompleteReceiver* completeReceiver = nullptr);
+    virtual void addToPile(CFPilable *pilable, bool snap = false, IAnimationCompleteReceiver* completeReceiver = nullptr, AnimCompleteFunction completeFunction = &IAnimationCompleteReceiver::animationCompleteWithId);
     virtual void addToPileStart(CFPilable* pilable, bool snap = false, IAnimationCompleteReceiver* completeReceiver = nullptr);
     virtual bool isInPile(CFPilable* pilable);
     virtual void removeFromPile(bool notify = false);

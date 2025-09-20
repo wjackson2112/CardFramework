@@ -15,7 +15,9 @@
 #include "TransformAnimation.h"
 #include "OptionsManager.h"
 // #include "SPSnapValidatorFourSuits.h"
+#include "CFFlipAnimation.h"
 #include "CFGameState.h"
+#include "CompoundAnimation.h"
 #include "Scene.h"
 
 #include "EventManager.h"
@@ -177,14 +179,24 @@ bool CFCard::isTopmostAtPoint(glm::vec2 point)
     return true;
 }
 
-void CFCard::flip()
+void CFCard::flip(IAnimationCompleteReceiver* receiver/* = nullptr*/, AnimCompleteFunction completeFunction/* = ""*/, const std::string &completeIdentifier/* = &IAnimationCompleteReceiver::animationCompleteWithId*/)
 {
-    faceUp = !faceUp;
+    auto* animComp = getComponent<AnimationComponent>();
+
+    animComp->addAndStart<CFFlipAnimation>(.15f, this);
+
 
     // Start receiving updates when card turned face up
     // NOTE: Face down disable is handled in the animation callback
-    if(isFaceUp())
-        shouldUpdate = true;
+    // if(isFaceUp())
+    shouldUpdate = true;
+
+
+};
+
+void CFCard::flipTexture()
+{
+    faceUp = !faceUp;
 
     std::string assetName = cardValueStrings[rank] + "_of_" + cardSuitStrings[suit] + ".png";
     Texture2D texture = AssetManager::getInstance()->getTexture(assetName);
@@ -194,7 +206,7 @@ void CFCard::flip()
         getComponent<SpriteComponent2D>()->setTexture(texture);
     else
         getComponent<SpriteComponent2D>()->setTexture(textureBack);
-};
+}
 
 bool CFCard::hasUnfinishedAnimations() {
     return getComponent<AnimationComponent>()->hasUnfinishedAnimations();
@@ -241,7 +253,7 @@ void CFCard::moveTo(glm::vec3 target, IAnimationCompleteReceiver* receiver, cons
         if(!transformAnim.hasFinished())
             translation -= transformAnim.getRemainingTranslation();
 
-    Transform targetTransform = this->transform;
+    Transform targetTransform = Transform();
     targetTransform.translate(translation);
 
     if(translation.x != 0.f || translation.y != 0.f || translation.z != 0.f)

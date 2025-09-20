@@ -99,7 +99,8 @@ public:
     bool isTopmostAtPoint(glm::vec2 point);
     bool isTopmost();
 
-    void flip();
+    void flip(IAnimationCompleteReceiver* receiver = nullptr, AnimCompleteFunction completeFunction = &IAnimationCompleteReceiver::animationCompleteWithId, const std::string &completeIdentifier = "");
+    void flipTexture();
     bool isFaceUp() { return faceUp; }
     bool isFaceDown() { return !isFaceUp(); }
     bool hasUnfinishedAnimations();
