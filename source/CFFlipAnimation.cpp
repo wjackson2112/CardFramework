@@ -7,7 +7,8 @@
 #include <iostream>
 #include <bits/ostream.tcc>
 
-#include "TransformAnimation.h"
+#include "TranslationAnimation.h"
+#include "ScaleAnimation.h"
 #include "SpriteComponent2D.h"
 #include "CFCard.h"
 
@@ -18,18 +19,15 @@ CFFlipAnimation::CFFlipAnimation(float lengthSeconds, Entity* animatedEntity, IA
 {
     glm::vec2 spriteSize = animatedEntity->getComponent<SpriteComponent2D>()->getSize();
 
-    Transform midTransform = Transform();
-    midTransform.translate(glm::vec3(spriteSize.x/2, 0.0f, 0.0f));
-    midTransform.scaleTo(glm::vec3(0.0, 1.0, 1.0));
+    glm::vec3 translation = glm::vec3(spriteSize.x/2, 0.0f, 0.0f);
+    glm::vec3 midScale = glm::vec3(0.0, 1.0, 1.0);
+    glm::vec3 endScale = glm::vec3(1.0, 1.0, 1.0);
 
-    Transform endTransform = Transform();
-    endTransform.translate(glm::vec3(-spriteSize.x/2, 0.0f, 0.0f));
+    addAnimation<TranslationAnimation>(0.f, animatedEntity, translation, lengthSeconds / 2);
+    addAnimation<ScaleAnimation>(0.f, animatedEntity, midScale, lengthSeconds / 2, this, static_cast<AnimCompleteFunction>(&CFFlipAnimation::flipTexture));
 
-    // Slim to zero
-    addAnimation<TransformAnimation>(0.f, animatedEntity, midTransform, lengthSeconds / 2, this, static_cast<AnimCompleteFunction>(&CFFlipAnimation::flipTexture));
-
-    // Widen back up
-    addAnimation<TransformAnimation>(lengthSeconds / 2, animatedEntity, endTransform, lengthSeconds / 2);
+    addAnimation<TranslationAnimation>(lengthSeconds / 2, animatedEntity, -translation, lengthSeconds / 2);
+    addAnimation<ScaleAnimation>(lengthSeconds / 2, animatedEntity, endScale, lengthSeconds / 2);
 }
 
 void CFFlipAnimation::flipTexture(std::string identifier, Entity *animatedEntity)

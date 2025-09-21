@@ -12,7 +12,7 @@
 #include "SpriteSheetComponent2D.h"
 #include "CollisionComponent2DAABB.h"
 #include "AnimationComponent.h"
-#include "TransformAnimation.h"
+#include "TranslationAnimation.h"
 #include "OptionsManager.h"
 // #include "SPSnapValidatorFourSuits.h"
 #include "CFFlipAnimation.h"
@@ -183,7 +183,7 @@ void CFCard::flip(IAnimationCompleteReceiver* receiver/* = nullptr*/, AnimComple
 {
     auto* animComp = getComponent<AnimationComponent>();
 
-    animComp->addAndStart<CFFlipAnimation>(.15f, this);
+    animComp->addAndStart<CFFlipAnimation>(.25f, this);
 
 
     // Start receiving updates when card turned face up
@@ -249,15 +249,12 @@ void CFCard::moveTo(glm::vec3 target, IAnimationCompleteReceiver* receiver, cons
 
     // Determine where the card is already going, so we can just add enough animation
     // to get to the new target without overshooting
-    for(auto transformAnim : animComp->getAnimations<TransformAnimation>())
-        if(!transformAnim.hasFinished())
-            translation -= transformAnim.getRemainingTranslation();
-
-    Transform targetTransform = Transform();
-    targetTransform.translate(translation);
+    for(auto transAnim : animComp->getAnimations<TranslationAnimation>())
+        if(!transAnim.hasFinished())
+            translation -= transAnim.getRemainingTranslation();
 
     if(translation.x != 0.f || translation.y != 0.f || translation.z != 0.f)
-        animComp->addAndStart<TransformAnimation>(this, targetTransform, 0.3f, receiver, completeFunction, completeIdentifier);
+        animComp->addAndStart<TranslationAnimation>(this, translation, 0.25f, receiver, completeFunction, completeIdentifier);
 
     shouldUpdate = true;
 }
