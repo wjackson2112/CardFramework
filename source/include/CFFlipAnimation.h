@@ -7,17 +7,14 @@
 
 #include "CompoundAnimation.h"
 
-class CFFlipAnimation : public CompoundAnimation, public IAnimationCompleteReceiver
+class CFCard;
+
+class CFFlipAnimation : public CompoundAnimation
 {
 public:
-    CFFlipAnimation(float lengthSeconds, Entity* animatedEntity, IAnimationCompleteReceiver* receiver = nullptr,
-                    AnimCompleteFunction completeFunction = &IAnimationCompleteReceiver::animationCompleteWithId,
+    CFFlipAnimation(float lengthSeconds, CFCard* animatedCard, IAnimationCompleteReceiver* receiver = nullptr,
+                    AnimCompleteFunction completeFunction = &IAnimationCompleteReceiver::animationComplete,
                     const std::string& completeIdentifier = "");
-
-private:
-    void flipTexture(std::string identifier, Entity* animatedEntity);
-    void animationCompleteWithId(std::string identifier, Entity *animatedEntity) override {};
-
 };
 
 #endif //CF_FLIP_ANIMATION_H

@@ -5,6 +5,7 @@
 #include "CFCard.h"
 
 #include <iostream>
+#include <limits>
 
 #include "AssetManager.h"
 //#include "EntityManager.h"
@@ -81,7 +82,7 @@ CFPilable* CFCard::getClosestOverlap()
 {
     CFPilable *bestPilable = nullptr;
     float bestArea = 0.0f;
-    float bestZ = -MAXFLOAT;
+    float bestZ = -std::numeric_limits<float>::max();
 
 //    EntityManager* entityManager = EntityManager::getInstance();
 //    std::vector<Entity*> entities = entityManager->getEntitiesInScene(entityManager->getSceneForEntity(this));
@@ -194,7 +195,7 @@ void CFCard::flip(IAnimationCompleteReceiver* receiver/* = nullptr*/, AnimComple
 
 };
 
-void CFCard::flipTexture()
+void CFCard::flipTexture(std::string identifier)
 {
     faceUp = !faceUp;
 
@@ -254,7 +255,7 @@ void CFCard::moveTo(glm::vec3 target, IAnimationCompleteReceiver* receiver, cons
             translation -= transAnim.getRemainingTranslation();
 
     if(translation.x != 0.f || translation.y != 0.f || translation.z != 0.f)
-        animComp->addAndStart<TranslationAnimation>(this, translation, 0.25f, receiver, completeFunction, completeIdentifier);
+        animComp->addAndStart<TranslationAnimation>(&this->transform, translation, .25f, receiver, completeFunction, completeIdentifier);
 
     shouldUpdate = true;
 }
@@ -265,12 +266,21 @@ void CFCard::setSize(glm::vec2 size)
     getComponent<SpriteComponent2D>()->setSize(size);
 }
 
-void CFCard::animationCompleteWithId(std::string identifier, Entity* entity)
+void CFCard::animationComplete(std::string identifier)
 {
+    if(identifier == "dealComplete")
+    {
+        gameState->gameMode->dealComplete(identifier);
+    }
+
+    if(identifier == "resetGameComplete")
+    {
+        gameState->gameMode->resetGameComplete();
+    }
+
     // Turn off updates for face down cards after they're all settled
     if(!getComponent<AnimationComponent>()->hasAnimations() && isFaceDown())
         shouldUpdate = false;
 
-    // TODO: Bring this back after establishing the gamestate type
-    gameState->animationCompleteWithId(identifier, this);
+    gameState->cardAnimationComplete(this, identifier);
 }

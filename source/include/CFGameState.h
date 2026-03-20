@@ -9,24 +9,26 @@
 #define DRAG_THRESHOLD 50
 
 #include <random>
+#include <string>
 
 #include "IAnimationCompleteReceiver.h"
 #include "CFCard.h"
+#include "CFGameMode.h"
 
 class SPSelectAction;
 class SPCancelAction;
 class SPDealAction;
 class SPUndoAction;
 
-struct CFGameState : public IAnimationCompleteReceiver {
-private:
-    std::random_device rd = std::random_device {};
-    std::default_random_engine rng = std::default_random_engine {rd()};
+class CFGameState {
 public:
-
+    CFGameMode* gameMode;
     std::vector<CFCard*> cards;
 
-    void shuffleCards();
+    void cardAnimationComplete(CFCard* card, std::string identifier)
+    {
+        gameMode->cardAnimationComplete(card, identifier);
+    }
 };
 
 

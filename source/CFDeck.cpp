@@ -6,6 +6,7 @@
 
 #include <random>
 #include <iostream>
+#include <algorithm>
 #include "AnimationComponent.h"
 
 void CFDeck::update(float deltaTime)
@@ -41,9 +42,14 @@ void CFDeck::update(float deltaTime)
             getPileEnd()->shouldUpdate = true;
             getPileEnd()->shouldDraw = true;
             getPileEnd()->raiseToFront();
-            DealQueueElement front = dealQueue.front();
-            front.pilable->addToPile(getPileEnd(), false, front.receiver, front.callback);
+            CFPilable* front = dealQueue.front();
             dealQueue.pop();
+
+            std::string identifier = "deal";
+            if(dealQueue.empty())
+                identifier = "dealComplete";
+            front->addToPile(getPileEnd(), false, identifier);
+
             secondsSinceLastDeal = 0;
             getPileEnd()->shouldUpdate = true;
             getPileEnd()->shouldDraw = true;
@@ -63,6 +69,8 @@ int CFDeck::getDeckSize()
     for(CFPilable* curr = getPileChild(); curr != nullptr; curr = curr->getPileChild())
         deckSize++;
 
+    deckSize -= dealQueue.size();
+
     return deckSize;
 }
 
@@ -70,8 +78,30 @@ bool CFDeck::isDealing() {
     return !dealQueue.empty();
 }
 
-void CFDeck::deal(CFPile* destination, IAnimationCompleteReceiver* receiver/* = nullptr*/, AnimCompleteFunction callback/* = nullptr*/) {
-    dealQueue.push(DealQueueElement(destination, receiver, callback));
+void CFDeck::shuffle()
+{
+    std::random_device rd = std::random_device {};
+    std::default_random_engine rng = std::default_random_engine {rd()};
+    std::vector<CFPilable*> cards;
+
+    for(CFPilable* currPilable = getPileChild(); currPilable != nullptr; currPilable = currPilable->getPileChild())
+    {
+        currPilable->removeFromPile();
+        cards.push_back(currPilable);
+    }
+
+    for (int i = 0; i < 7; i++) {
+        std::shuffle(std::begin(cards), std::end(cards), rng);
+    }
+
+    for(CFPilable* card : cards)
+    {
+        addToPile(card);
+    }
+}
+
+void CFDeck::deal(CFPile* destination){//, IAnimationCompleteReceiver* receiver/* = nullptr*/, AnimCompleteFunction callback/* = nullptr*/) {
+    dealQueue.push(destination);
     shouldUpdate = true;
 }
 

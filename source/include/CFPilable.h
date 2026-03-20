@@ -15,7 +15,7 @@
 
 class CFDeck;
 
-class CFPilable : public Entity//, public IAnimationCompleteReceiver
+class CFPilable : public Entity, public IAnimationCompleteReceiver
 {
 protected:
     CFPilable* pileRoot = nullptr;
@@ -64,7 +64,7 @@ public:
 
     virtual void raiseToFront();
     virtual void lowerToBack();
-    virtual void addToPile(CFPilable *pilable, bool snap = false, IAnimationCompleteReceiver* completeReceiver = nullptr, AnimCompleteFunction completeFunction = &IAnimationCompleteReceiver::animationCompleteWithId);
+    virtual void addToPile(CFPilable *pilable, bool snap = false, std::string identifier = "addToPile"/*IAnimationCompleteReceiver* completeReceiver = nullptr, AnimCompleteFunction completeFunction = &IAnimationCompleteReceiver::animationComplete*/);
     virtual void addToPileStart(CFPilable* pilable, bool snap = false, IAnimationCompleteReceiver* completeReceiver = nullptr);
     virtual bool isInPile(CFPilable* pilable);
     virtual void removeFromPile(bool notify = false);
@@ -78,6 +78,8 @@ public:
     virtual void select();
     virtual void deselect();
     virtual bool isSelected() { return selected; }
+
+    void animationComplete(std::string identifier) override {};
 
     // Swap supported to allow CFPile to implement the shuffle algorithm
     friend void swap(CFPilable& left, CFPilable& right);

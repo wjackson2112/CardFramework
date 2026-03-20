@@ -11,18 +11,8 @@
 
 #include <queue>
 
-struct DealQueueElement
-{
-    CFPilable* pilable;
-    IAnimationCompleteReceiver* receiver;
-    AnimCompleteFunction callback;
-
-    DealQueueElement(CFPilable* pilable, IAnimationCompleteReceiver* receiver = nullptr, AnimCompleteFunction callback = nullptr)
-    : pilable(pilable), receiver(receiver), callback(callback) {}
-};
-
 class CFDeck : public CFPile {
-    std::queue<DealQueueElement> dealQueue;
+    std::queue<CFPilable*> dealQueue;
     float secondsSinceLastDeal = -1.0;
     float secondsBetweenDeals;
 
@@ -39,7 +29,9 @@ public:
     int getDeckSize();
 
     bool isDealing();
-    void deal(CFPile* destination, IAnimationCompleteReceiver* receiver = nullptr, AnimCompleteFunction callback = nullptr);
+
+    void shuffle();
+    void deal(CFPile* destination);//, IAnimationCompleteReceiver* receiver = nullptr, AnimCompleteFunction callback = nullptr);
 };
 
 #endif //CF_DECK_H

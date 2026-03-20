@@ -11,7 +11,9 @@
 #include "IAnimationCompleteReceiver.h"
 #include "CFPilable.h"
 
+class CFGameMode;
 class CFGameState;
+
 
 // TODO: This should probably be dynamic
 enum CFCardBackColor
@@ -76,7 +78,7 @@ const std::string cardValueStrings[15] = {
         "king"
 };
 
-class CFCard : public CFPilable, public IAnimationCompleteReceiver
+class CFCard : public CFPilable//, public IAnimationCompleteReceiver
 {
     CFCardSuit suit;
     CFCardRank rank;
@@ -99,8 +101,8 @@ public:
     bool isTopmostAtPoint(glm::vec2 point);
     bool isTopmost();
 
-    void flip(IAnimationCompleteReceiver* receiver = nullptr, AnimCompleteFunction completeFunction = &IAnimationCompleteReceiver::animationCompleteWithId, const std::string &completeIdentifier = "");
-    void flipTexture();
+    void flip(IAnimationCompleteReceiver* receiver = nullptr, AnimCompleteFunction completeFunction = &IAnimationCompleteReceiver::animationComplete, const std::string &completeIdentifier = "");
+    void flipTexture(std::string identifier);
     bool isFaceUp() { return faceUp; }
     bool isFaceDown() { return !isFaceUp(); }
     bool hasUnfinishedAnimations();
@@ -117,7 +119,7 @@ public:
     glm::vec2 getSize() { return size; }
 
     //IAnimationCompleteReceiver
-    void animationCompleteWithId(std::string identifier, Entity* entity);
+    void animationComplete(std::string identifier) override;
 };
 
 #endif //CF_CARD_H
