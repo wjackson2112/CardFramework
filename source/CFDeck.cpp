@@ -90,9 +90,7 @@ void CFDeck::shuffle()
         cards.push_back(currPilable);
     }
 
-    for (int i = 0; i < 7; i++) {
-        std::shuffle(std::begin(cards), std::end(cards), rng);
-    }
+    std::shuffle(std::begin(cards), std::end(cards), rng);
 
     for(CFPilable* card : cards)
     {

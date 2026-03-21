@@ -30,7 +30,7 @@ public:
 
     bool isDealing();
 
-    void shuffle();
+    void shuffle() override;
     void deal(CFPile* destination);//, IAnimationCompleteReceiver* receiver = nullptr, AnimCompleteFunction callback = nullptr);
 };
 
